@@ -8,8 +8,11 @@ from keras.layers import Flatten
 from keras.layers import Dense
 from keras.models import model_from_json
 from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
+from keras.preprocessing import image
 
-loadingModelEnabled = False
+
+loadingModelEnabled = True
 model = None
 
 # defining the test data
@@ -65,19 +68,6 @@ else:
     trainModel()
 
 # Part 3 - Making new predictions
-import numpy as np
-from keras.preprocessing import image
-test_image = image.load_img('dataset/single_prediction/cat_or_dog_1.jpg', target_size = (64, 64))
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = model.predict(test_image)
-training_set.class_indices
-if result[0][0] == 1:
-    prediction = 'dog'
-    print ('test image is a dog')
-else:
-    prediction = 'cat'
-    print ('test image is a cat')
 test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
 test_image = image.img_to_array(test_image)
 test_image = np.expand_dims(test_image, axis = 0)
@@ -91,8 +81,7 @@ else:
     print ('test image is a cat')
 
 
-#saving and reloading model
-
+# #saving and reloading model
 
 from keras.models import model_from_json
 model_json = model.to_json()
@@ -101,38 +90,26 @@ with open("model.json", "w") as json_file:
 # serialize weights to HDF5
 model.save_weights("model.h5")
 print("Saved model to disk")
-
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
 json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-loaded_model.load_weights("model.h5")
-print("Loaded model from disk")
 
-# Part 5 - Making new predictions from loaded model
-import numpy as np
-from keras.preprocessing import image
-test_image = image.load_img('dataset/single_prediction/cat_or_dog_1.jpg', target_size = (64, 64))
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = loaded_model.predict(test_image)
-training_set.class_indices
-if result[0][0] == 1:
-    prediction = 'dog'
-    print ('test image is a dog')
-else:
-    prediction = 'cat'
-    print ('test image is a cat')
-test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = loaded_model.predict(test_image)
-training_set.class_indices
-if result[0][0] == 1:
-    prediction = 'dog'
-    print ('test image is a dog')
-else:
-    prediction = 'cat'
-    print ('test image is a cat')
+# json_file = open('model.json', 'r')
+# loaded_model_json = json_file.read()
+# json_file.close()
+# loaded_model = model_from_json(loaded_model_json)
+# # load weights into new model
+# loaded_model.load_weights("model.h5")
+# print("Loaded model from disk")
+
+# # Part 5 - Making new predictions from loaded model
+# test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
+# test_image = image.img_to_array(test_image)
+# test_image = np.expand_dims(test_image, axis = 0)
+# result = loaded_model.predict(test_image)
+# training_set.class_indices
+# if result[0][0] == 1:
+#     prediction = 'dog'
+#     print ('test image is a dog')
+# else:
+#     prediction = 'cat'
+#     print ('test image is a cat')
 
