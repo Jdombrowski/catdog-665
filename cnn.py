@@ -7,24 +7,34 @@ from keras.layers import MaxPooling2D
 from keras.layers import Flatten
 from keras.layers import Dense
 from keras.models import model_from_json
+from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
+from keras.preprocessing import image
 
-# if os.path.isfile('model.json'):
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-loaded_model.load_weights("model.h5")
-print("Loaded model from disk") 
+
+loadingModelEnabled = True
+model = None
+
+# defining the test data
+train_datagen = ImageDataGenerator(rescale = 1./255,
+shear_range = 0.2,
+zoom_range = 0.2,
+horizontal_flip = True)
+test_datagen = ImageDataGenerator(rescale = 1./255)
+training_set = train_datagen.flow_from_directory('dataset/training_set',
+target_size = (64, 64),
+batch_size = 32,
+class_mode = 'binary')
+test_set = test_datagen.flow_from_directory('dataset/test_set',
+target_size = (64, 64),
+batch_size = 32,
+class_mode = 'binary')
 
 def trainModel():
     model = Sequential()
     # Step 1 - Convolution
     model.add(Conv2D(32, (3, 3), input_shape = (64, 64, 3), activation = 'relu'))
     # Step 2 - Pooling
-    model.add(MaxPooling2D(pool_size = (2, 2)))
-    # Adding a second convolutional layer
-    model.add(Conv2D(32, (3, 3), activation = 'relu'))
     model.add(MaxPooling2D(pool_size = (2, 2)))
     # Step 3 - Flattening
     model.add(Flatten())
@@ -34,44 +44,30 @@ def trainModel():
     # Compiling the CNN
     model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
     # Part 2 - Fitting the CNN to the images
-    from keras.preprocessing.image import ImageDataGenerator
-    train_datagen = ImageDataGenerator(rescale = 1./255,
-    shear_range = 0.2,
-    zoom_range = 0.2,
-    horizontal_flip = True)
-    test_datagen = ImageDataGenerator(rescale = 1./255)
-    training_set = train_datagen.flow_from_directory('dataset/training_set',
-    target_size = (64, 64),
-    batch_size = 32,
-    class_mode = 'binary')
-    test_set = test_datagen.flow_from_directory('dataset/test_set',
-    target_size = (64, 64),
-    batch_size = 32,
-    class_mode = 'binary')
+    
     model.fit_generator(training_set,
     # steps_per_epoch = 8000,
-    steps_per_epoch = 500,
-    epochs = 10,
+    steps_per_epoch = 20,
+    epochs = 5,
     validation_data = test_set,
     # validation_steps = 2000)
-    validation_steps = 100)
+    validation_steps = 5)
 
-trainModel()
+if loadingModelEnabled:
+    if os.path.isfile('model.json'):
+        json_file = open('model.json', 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        model = model_from_json(loaded_model_json)
+        # load weights into new model
+        model.load_weights("model.h5")
+        print("Loaded model from disk") 
+    else:
+        trainModel()
+else:
+    trainModel()
 
 # Part 3 - Making new predictions
-import numpy as np
-from keras.preprocessing import image
-test_image = image.load_img('dataset/single_prediction/cat_or_dog_1.jpg', target_size = (64, 64))
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = model.predict(test_image)
-training_set.class_indices
-if result[0][0] == 1:
-    prediction = 'dog'
-    print ('test image is a dog')
-else:
-    prediction = 'cat'
-    print ('test image is a cat')
 test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
 test_image = image.img_to_array(test_image)
 test_image = np.expand_dims(test_image, axis = 0)
@@ -85,8 +81,7 @@ else:
     print ('test image is a cat')
 
 
-#saving and reloading model
-
+# #saving and reloading model
 
 from keras.models import model_from_json
 model_json = model.to_json()
@@ -95,38 +90,26 @@ with open("model.json", "w") as json_file:
 # serialize weights to HDF5
 model.save_weights("model.h5")
 print("Saved model to disk")
-
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
 json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-loaded_model.load_weights("model.h5")
-print("Loaded model from disk")
 
-# Part 5 - Making new predictions from loaded model
-import numpy as np
-from keras.preprocessing import image
-test_image = image.load_img('dataset/single_prediction/cat_or_dog_1.jpg', target_size = (64, 64))
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = loaded_model.predict(test_image)
-training_set.class_indices
-if result[0][0] == 1:
-    prediction = 'dog'
-    print ('test image is a dog')
-else:
-    prediction = 'cat'
-    print ('test image is a cat')
-test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = loaded_model.predict(test_image)
-training_set.class_indices
-if result[0][0] == 1:
-    prediction = 'dog'
-    print ('test image is a dog')
-else:
-    prediction = 'cat'
-    print ('test image is a cat')
+# json_file = open('model.json', 'r')
+# loaded_model_json = json_file.read()
+# json_file.close()
+# loaded_model = model_from_json(loaded_model_json)
+# # load weights into new model
+# loaded_model.load_weights("model.h5")
+# print("Loaded model from disk")
+
+# # Part 5 - Making new predictions from loaded model
+# test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
+# test_image = image.img_to_array(test_image)
+# test_image = np.expand_dims(test_image, axis = 0)
+# result = loaded_model.predict(test_image)
+# training_set.class_indices
+# if result[0][0] == 1:
+#     prediction = 'dog'
+#     print ('test image is a dog')
+# else:
+#     prediction = 'cat'
+#     print ('test image is a cat')
 
