@@ -1,16 +1,12 @@
 # example from https://becominghuman.ai/building-an-image-model-using-deep-learning-in-python-totally-from-a-beginners-perspective-be8dbaf22dd8
 import os
-# Importing the Keras libraries and packages
-from keras.models import Sequential
-from keras.layers import Conv2D
-from keras.layers import MaxPooling2D
-from keras.layers import Flatten
-from keras.layers import Dense
-from keras.models import model_from_json
-from keras.preprocessing.image import ImageDataGenerator
-import numpy as np
-from keras.preprocessing import image
 
+import numpy as np
+from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
+# Importing the Keras libraries and packages
+from keras.models import Sequential, model_from_json
+from keras.preprocessing import image
+from keras.preprocessing.image import ImageDataGenerator
 
 loadingModelEnabled = True
 model = None
@@ -83,7 +79,6 @@ else:
 
 # #saving and reloading model
 
-from keras.models import model_from_json
 model_json = model.to_json()
 with open("model.json", "w") as json_file:
     json_file.write(model_json)
@@ -112,4 +107,3 @@ json_file.close()
 # else:
 #     prediction = 'cat'
 #     print ('test image is a cat')
-
