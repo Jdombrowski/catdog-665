@@ -8,7 +8,7 @@ from keras.models import Sequential, model_from_json
 from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
 
-loadingModelEnabled = True
+loadingModelEnabled = False
 model = None
 
 # defining the test data
@@ -36,6 +36,10 @@ def trainModel():
     model.add(Flatten())
     # Step 4 - Full connection
     model.add(Dense(units = 128, activation = 'relu'))
+
+#experiment
+    model.add(Dropout(0.2))
+
     model.add(Dense(units = 1, activation = 'sigmoid'))
     # Compiling the CNN
     model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
