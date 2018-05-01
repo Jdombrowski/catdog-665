@@ -1,3 +1,13 @@
 .DS_store
 dataset/*
 .vscode/*
+dog-breed/dataset/test/*
+dog-breed/dataset/train/*
+dog-breed/keras-model/env/*
+dog-breeds/zips/*
+dog-breeds/vgg16_weights.h5
+
+*.csv
+*.h5
+*.zip
+*.json
