@@ -1,5 +1,5 @@
 # How to Run
-Download the data from the kaggle site 
+Download the data from the kaggle site
 
 # [Kaggle](https://www.kaggle.com/c/dog-breed-identification/data)
 
@@ -8,6 +8,10 @@ Download the data from the kaggle site
 2. Move `images_to_folders.py` into the `/train` directory
 
 3. Run `python3 images_to_folders.py` to move all images into the appropriate folders. Aside: `test/` does not have labels, so running this script in that dir will only result in error. 
+
+## after setup
+By moving to the `/keras-model` dir, and running `python3 cnn_base_model.py` the neural net will begin training, you should shee the 10220 images from 120 classes loaded, and the model will save after running. 
+
 
 ## Introduction
 ### /datasets
