@@ -79,7 +79,7 @@ model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = [
 # ~ FIT MODEL
 model.fit_generator(training_set, 
 steps_per_epoch = 500, 
-epochs = 40,
+epochs = 20,
 validation_data = test_set,
 validation_steps = 100
 )
