@@ -26,46 +26,49 @@ target_size = (64, 64),
 batch_size = 32,
 class_mode = 'binary')
 
-def trainModel():
-    model = Sequential()
-    # Step 1 - Convolution
-    model.add(Conv2D(32, (3, 3), input_shape = (64, 64, 3), activation = 'relu'))
-    # Step 2 - Pooling
-    model.add(MaxPooling2D(pool_size = (2, 2)))
-    # Step 3 - Flattening
-    model.add(Flatten())
-    # Step 4 - Full connection
-    model.add(Dense(units = 128, activation = 'relu'))
+# def trainModel():
+model = Sequential()
+# Step 1 - Convolution
+model.add(Conv2D(32, (3, 3), input_shape = (64, 64, 3), activation = 'relu'))
+# Step 2 - Pooling
+model.add(MaxPooling2D(pool_size = (2, 2)))
+model.add(Dropout(0.5))
+
+# Step 3 - Flattening
+model.add(Flatten())
+# Step 4 - Full connection
+model.add(Dense(units = 128, activation = 'relu'))
 
 #experiment
-    model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 
-    model.add(Dense(units = 1, activation = 'sigmoid'))
-    # Compiling the CNN
-    model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
-    # Part 2 - Fitting the CNN to the images
-    
-    model.fit_generator(training_set,
-    # steps_per_epoch = 8000,
-    steps_per_epoch = 20,
-    epochs = 5,
-    validation_data = test_set,
-    # validation_steps = 2000)
-    validation_steps = 5)
+model.add(Dense(units = 1, activation = 'sigmoid'))
+# Compiling the CNN
+model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+# Part 2 - Fitting the CNN to the images
 
-if loadingModelEnabled:
-    if os.path.isfile('model.json'):
-        json_file = open('model.json', 'r')
-        loaded_model_json = json_file.read()
-        json_file.close()
-        model = model_from_json(loaded_model_json)
-        # load weights into new model
-        model.load_weights("model.h5")
-        print("Loaded model from disk") 
-    else:
-        trainModel()
-else:
-    trainModel()
+model.fit_generator(training_set,
+# steps_per_epoch = 8000,
+steps_per_epoch = 200,
+epochs = 5,
+validation_data = test_set,
+# validation_steps = 2000)
+validation_steps = 50)
+model.summary()
+
+# if loadingModelEnabled:
+#     if os.path.isfile('model.json'):
+#         json_file = open('model.json', 'r')
+#         loaded_model_json = json_file.read()
+#         json_file.close()
+#         model = model_from_json(loaded_model_json)
+#         # load weights into new model
+#         model.load_weights("model.h5")
+#         print("Loaded model from disk") 
+#     else:
+#         trainModel()
+# else:
+#     trainModel()
 
 # Part 3 - Making new predictions
 test_image = image.load_img('dataset/single_prediction/sushi.jpg', target_size = (64, 64))
