@@ -16,13 +16,13 @@ DATA SETUP
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
 img_size = 90
 batch_size = 32
+train_samples_size = 10222
 
 # Directories
 training_dir = '../dataset/train'
 testing_dir = '../dataset/test'
 
 # TRAINING DATA
-# print('loading training data')
 train_datagen = ImageDataGenerator(
   rescale=1./255,
   shear_range=0.2,
@@ -36,7 +36,6 @@ training_set = train_datagen.flow_from_directory(
   class_mode = 'categorical')
 
 # TESTING DATA
-# print('loading testing data')
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_set = test_datagen.flow_from_directory(
@@ -78,9 +77,6 @@ model = Sequential()
 for layer in mod_vgg16_model.layers:
   model.add(layer)
 
-# Pop the last default Dense layer of VGG16
-# model.layers.pop()
-
 # Freeze the existing layers to prevent further training
 for layer in model.layers:
   layer.trainable = False
@@ -97,23 +93,13 @@ model.compile(
   loss = 'categorical_crossentropy',
   metrics = ['accuracy'])
 
+epochs = 50
+steps = train_samples_size // batch_size
+
 # Fit the model
 model.fit_generator(
   training_set,
-  steps_per_epoch = 20,
-  epochs = 5,
+  steps_per_epoch = steps,
+  epochs = epochs,
   validation_data = test_set,
   validation_steps = 4)
-
-'''
-PREDICT USING THE FINE-TUNED MODEL
-'''
-# Found 10222 images belonging to 120 classes.
-# Found 0 images belonging to 0 classes.
-# 2018-05-08 02:56:09.085192: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
-# Epoch 1/5
-# 20/20 [==============================] - 7317s 366s/step - loss: 4.7895 - acc: 0.0094
-# Epoch 2/5
-# 20/20 [==============================] - 9929s 496s/step - loss: 4.7859 - acc: 0.0141
-# Epoch 3/5
-# 15/20 [=====================>........] - ETA: 18:31 - loss: 4.7889 - acc: 0.0063
