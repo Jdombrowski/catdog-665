@@ -16,7 +16,19 @@ DATA SETUP
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
 img_size = 90
 batch_size = 32
+
+# (for testing)
+# train_samples_size = 4000
+# test_samples_size = 1000
+
+# notes: the actual number of data size
 train_samples_size = 10222
+test_samples_size = 10358
+
+epochs = 50
+# steps = 140
+steps = train_samples_size // batch_size
+validation_steps = test_samples_size // batch_size
 
 # Directories
 training_dir = '../dataset/train'
@@ -81,8 +93,13 @@ for layer in mod_vgg16_model.layers:
 for layer in model.layers:
   layer.trainable = False
 
+# Add other layers
+model.add(Dense(256, activation='relu'))
+model.add(Dropout(0.5))
+
 # Add the last Dense layer to classify the number of required dog breeds
 model.add(Dense(120, activation='softmax'))
+# model.summary()
 
 '''
 TRAIN THE FINE-TUNED MODEL
@@ -93,13 +110,17 @@ model.compile(
   loss = 'categorical_crossentropy',
   metrics = ['accuracy'])
 
-epochs = 50
-steps = train_samples_size // batch_size
-
 # Fit the model
 model.fit_generator(
   training_set,
   steps_per_epoch = steps,
   epochs = epochs,
   validation_data = test_set,
-  validation_steps = 4)
+  validation_steps = validation_steps)
+
+# model.fit_generator(
+#   training_set,
+#   steps_per_epoch = 10,
+#   epochs = epochs,
+#   validation_data = test_set,
+#   validation_steps = 5)
