@@ -6,7 +6,7 @@ import pandas as pd
 from keras import optimizers
 from keras.applications import vgg16, inception_v3, resnet50, mobilenet
 from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
-from keras.models import Sequential, model_from_json
+from keras.models import Sequential, model_from_json, Model
 from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -23,31 +23,47 @@ testing_dir = '../dataset/test'
 
 # TRAINING DATA
 # print('loading training data')
-train_datagen = ImageDataGenerator(rescale=1./255,
-shear_range=0.2,
-zoom_range=0.2,
-horizontal_flip = True)
+train_datagen = ImageDataGenerator(
+  rescale=1./255,
+  shear_range=0.2,
+  zoom_range=0.2,
+  horizontal_flip = True)
 
-training_set = train_datagen.flow_from_directory(training_dir,
-target_size=(img_size, img_size),
-batch_size=batch_size,
-class_mode = 'categorical')
+training_set = train_datagen.flow_from_directory(
+  training_dir,
+  target_size=(img_size, img_size),
+  batch_size=batch_size,
+  class_mode = 'categorical')
 
 # TESTING DATA
 # print('loading testing data')
 test_datagen = ImageDataGenerator(rescale=1./255)
 
-test_set = test_datagen.flow_from_directory(testing_dir,
-target_size=(img_size, img_size),
-batch_size=batch_size,
-class_mode = 'input')
+test_set = test_datagen.flow_from_directory(
+  testing_dir,
+  target_size=(img_size, img_size),
+  batch_size=batch_size,
+  class_mode = 'input')
 
 '''
 BUILD and FINE-TUNE THE MODEL
 '''
 #Load the VGG16 model
-vgg16_model = vgg16.VGG16(weights='imagenet', input_shape=(img_size, img_size, 3))
- 
+# - set include_top=False to not include the 3 fully-connected layers at the top of the network
+# - reshape the input size to 90x90
+vgg16_model = vgg16.VGG16(weights='imagenet', include_top=False, input_shape=(img_size,img_size,3))
+# vgg16_model.summary(line_length=150)
+
+flatten = Flatten()
+# new_layer2 = Dense(120, activation='softmax')
+
+vgg16_input = vgg16_model.input
+vgg16_output = flatten(vgg16_model.output)
+# out2 = new_layer2(flatten(vgg16_model.output))
+
+mod_vgg16_model = Model(vgg16_input, vgg16_output)
+# model2.summary(line_length=150)
+
 # #Load the Inception_V3 model
 # inception_model = inception_v3.InceptionV3(weights='imagenet')
  
@@ -59,11 +75,11 @@ vgg16_model = vgg16.VGG16(weights='imagenet', input_shape=(img_size, img_size, 3
 
 # Transform VGG16 model into a Sequential model by adding its existing layers
 model = Sequential()
-for layer in vgg16_model.layers:
+for layer in mod_vgg16_model.layers:
   model.add(layer)
 
 # Pop the last default Dense layer of VGG16
-model.layers.pop()
+# model.layers.pop()
 
 # Freeze the existing layers to prevent further training
 for layer in model.layers:
@@ -76,16 +92,28 @@ model.add(Dense(120, activation='softmax'))
 TRAIN THE FINE-TUNED MODEL
 '''
 # Compile the model
-model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
+model.compile(
+  optimizer = 'adam',
+  loss = 'categorical_crossentropy',
+  metrics = ['accuracy'])
 
 # Fit the model
-model.fit_generator(training_set, 
-steps_per_epoch = 20, 
-epochs = 5,
-validation_data = test_set,
-validation_steps = 4
-)
+model.fit_generator(
+  training_set,
+  steps_per_epoch = 20,
+  epochs = 5,
+  validation_data = test_set,
+  validation_steps = 4)
 
 '''
 PREDICT USING THE FINE-TUNED MODEL
 '''
+# Found 10222 images belonging to 120 classes.
+# Found 0 images belonging to 0 classes.
+# 2018-05-08 02:56:09.085192: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+# Epoch 1/5
+# 20/20 [==============================] - 7317s 366s/step - loss: 4.7895 - acc: 0.0094
+# Epoch 2/5
+# 20/20 [==============================] - 9929s 496s/step - loss: 4.7859 - acc: 0.0141
+# Epoch 3/5
+# 15/20 [=====================>........] - ETA: 18:31 - loss: 4.7889 - acc: 0.0063
