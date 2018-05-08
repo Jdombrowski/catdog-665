@@ -46,7 +46,7 @@ class_mode = 'input')
 BUILD and FINE-TUNE THE MODEL
 '''
 #Load the VGG16 model
-vgg16_model = vgg16.VGG16(weights='imagenet')
+vgg16_model = vgg16.VGG16(weights='imagenet', input_shape=(img_size, img_size, 3))
  
 # #Load the Inception_V3 model
 # inception_model = inception_v3.InceptionV3(weights='imagenet')
@@ -80,8 +80,8 @@ model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = [
 
 # Fit the model
 model.fit_generator(training_set, 
-steps_per_epoch = 500, 
-epochs = 10,
+steps_per_epoch = 20, 
+epochs = 5,
 validation_data = test_set,
 validation_steps = 4
 )
