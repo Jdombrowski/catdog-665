@@ -15,7 +15,7 @@ DATA SETUP
 '''
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
 img_size = 90
-batch_size = 32
+batch_size = 73
 
 # (for testing)
 # train_samples_size = 4000
@@ -25,7 +25,7 @@ batch_size = 32
 train_samples_size = 10222
 test_samples_size = 10358
 
-epochs = 50
+epochs = 140
 # steps = 140
 steps = train_samples_size // batch_size
 validation_steps = test_samples_size // batch_size
@@ -73,16 +73,7 @@ vgg16_output = flatten(vgg16_model.output)
 # out2 = new_layer2(flatten(vgg16_model.output))
 
 mod_vgg16_model = Model(vgg16_input, vgg16_output)
-# model2.summary(line_length=150)
-
-# #Load the Inception_V3 model
-# inception_model = inception_v3.InceptionV3(weights='imagenet')
- 
-# #Load the ResNet50 model
-# resnet_model = resnet50.ResNet50(weights='imagenet')
- 
-# #Load the MobileNet model
-# mobilenet_model = mobilenet.MobileNet(weights='imagenet')
+type(vgg16_model)
 
 # Transform VGG16 model into a Sequential model by adding its existing layers
 model = Sequential()
@@ -93,9 +84,7 @@ for layer in mod_vgg16_model.layers:
 for layer in model.layers:
   layer.trainable = False
 
-# Add other layers
-model.add(Dense(256, activation='relu'))
-model.add(Dropout(0.5))
+model.layers.pop()
 
 # Add the last Dense layer to classify the number of required dog breeds
 model.add(Dense(120, activation='softmax'))
