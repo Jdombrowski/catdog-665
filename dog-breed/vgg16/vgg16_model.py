@@ -3,6 +3,7 @@ import csv
 import numpy as np
 import pandas as pd
 
+from keras.callbacks import CSVLogger
 from keras import optimizers
 from keras.applications import vgg16, inception_v3, resnet50, mobilenet
 from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
@@ -14,11 +15,7 @@ from keras.preprocessing.image import ImageDataGenerator
 DATA SETUP
 '''
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
-<<<<<<< HEAD
-img_size = 90
-=======
 img_size = 128
->>>>>>> 3833d27e96fb18110519197298899ba377116876
 batch_size = 73
 
 # (for testing)
@@ -85,24 +82,16 @@ for layer in (mod_vgg16_model.layers):
   model.add(layer)
 
 # Freeze the existing layers to prevent further training
-# for layer in model.layers:
-#   layer.trainable = False
+for layer in model.layers:
+  layer.trainable = False
 
-<<<<<<< HEAD
 model.layers.pop()
-=======
-# # Add other layers
-# model.add(Dense(256, activation='relu'))
-# model.add(Dropout(0.5))
->>>>>>> 3833d27e96fb18110519197298899ba377116876
 
 # Add the last Dense layer to classify the number of required dog breeds
 model.add(Dense(120, activation='softmax'))
-# model.summary()
+model.summary()
+csv_logger = CSVLogger("training.log", append="True")
 
-'''
-TRAIN THE FINE-TUNED MODEL
-'''
 # Compile the model
 model.compile(
   optimizer = 'adam',
@@ -115,7 +104,8 @@ model.fit_generator(
   steps_per_epoch = steps,
   epochs = epochs,
   validation_data = test_set,
-  validation_steps = validation_steps)
+  validation_steps = validation_steps,
+  callbacks=[csv_logger])
 
 # model.fit_generator(
 #   training_set,
