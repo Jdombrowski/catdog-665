@@ -14,7 +14,11 @@ from keras.preprocessing.image import ImageDataGenerator
 DATA SETUP
 '''
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
+<<<<<<< HEAD
 img_size = 90
+=======
+img_size = 128
+>>>>>>> 3833d27e96fb18110519197298899ba377116876
 batch_size = 73
 
 # (for testing)
@@ -77,14 +81,20 @@ type(vgg16_model)
 
 # Transform VGG16 model into a Sequential model by adding its existing layers
 model = Sequential()
-for layer in mod_vgg16_model.layers:
+for layer in (mod_vgg16_model.layers):
   model.add(layer)
 
 # Freeze the existing layers to prevent further training
-for layer in model.layers:
-  layer.trainable = False
+# for layer in model.layers:
+#   layer.trainable = False
 
+<<<<<<< HEAD
 model.layers.pop()
+=======
+# # Add other layers
+# model.add(Dense(256, activation='relu'))
+# model.add(Dropout(0.5))
+>>>>>>> 3833d27e96fb18110519197298899ba377116876
 
 # Add the last Dense layer to classify the number of required dog breeds
 model.add(Dense(120, activation='softmax'))
