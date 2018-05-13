@@ -82,7 +82,7 @@ for layer in (mod_vgg16_model.layers):
 for layer in model.layers:
   layer.trainable = False
 
-model.layers.pop()
+# model.layers.pop()
 
 # Add the last Dense layer to classify the number of required dog breeds
 model.add(Dense(120, activation='softmax'))
