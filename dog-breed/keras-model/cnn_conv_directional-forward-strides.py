@@ -176,7 +176,7 @@ nn.add(MaxPooling2D(pool_size = (2, 2)))
 nn.add(Conv2D(32, (9, 9), activation='relu'))
 nn.add(MaxPooling2D(pool_size=(2, 2)))
 
-nn.add(Conv2D(32, (3, 3), activation='relu'))
+nn.add(Conv2D(32, (3, 3), activation='relu', strides=(3,3)))
 nn.add(MaxPooling2D(pool_size=(2, 2)))
 
 # for i in range(0 , int(sys.argv[2])):
