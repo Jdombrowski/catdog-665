@@ -13,3 +13,4 @@ dog-breeds/vgg16_weights.h5
 *.json
 *.txt
 *.log
+*.jpg

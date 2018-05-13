@@ -15,17 +15,8 @@ from keras.preprocessing.image import ImageDataGenerator
 
 class Network:
 
-  # All networks have the same number of training images
-
   NUM_TRAINING_IMAGES = 10220
-
-  # All of our images are in three color channels
-
   image_channels = 3
-
-  # 3x3 convolutional matrix to process each individual pixel
-  # of an input image (and/or node?)
-
   kernel_size = 3
 
   # Constructor
@@ -34,13 +25,8 @@ class Network:
 
     # Names are used when saving and loading networks
     self.name = "NONE"
-
-    # By default, we give a network an empty sequential model 
-    # as opposed to from an API
     self.model = Sequential()
-
-    # Images are resized to 90x90 for uniformity and efficiency
-    self.image_size = 90
+    self.image_size = 128
 
     # Batch size is the number of training examples in one epoch.
     # It is one parameter that is generally determined by trial and
@@ -53,11 +39,7 @@ class Network:
     # be equal to the other value.
 
     self.batch_size = 73
-
-    # And now we can generate the data
-
     self.training_data = self.generate_training_data()
-
     self.testing_data = self.generate_testing_data()
 
     # TODO: Number of output filters by layer?
@@ -187,27 +169,24 @@ class Network:
 
 nn = Network() # Has the training/testing data and a sequential model
 
-# Have to add the layers 
-# TODO: Should be able to pull them from a list or something? 
-
-# TODO: Create an "add input layer" command?
-
-nn.addConvLayer(input_shape=(90, 90, 3))
-
-nn.add(MaxPooling2D(pool_size = (4, 4)))
-
-nn.addConvLayer()
-
+nn.addConvLayer(input_shape=(nn.image_size, nn.image_size, 3))
 nn.add(MaxPooling2D(pool_size = (2, 2)))
 
-nn.addConvLayer()
 
-nn.add(MaxPooling2D(pool_size = (2, 2)))
+nn.add(Conv2D(32, (9, 9), activation='relu'))
+nn.add(MaxPooling2D(pool_size=(2, 2)))
+
+nn.add(Conv2D(32, (3, 3), activation='relu'))
+nn.add(MaxPooling2D(pool_size=(2, 2)))
+
+# for i in range(0 , int(sys.argv[2])):
+#   nn.addConvLayer()
+#   nn.add(MaxPooling2D(pool_size = (2, 2)))
 
 nn.add(Flatten())
 
-for i in range(0, 1):
-  nn.add(Dense(units = 120, activation = 'relu'))
+# for i in range(0, int(sys.argv[1])):
+#   nn.add(Dense(units = 120, activation = 'relu'))
 
 nn.add(Dense(units = 120, activation = 'softmax'))
 
@@ -217,4 +196,6 @@ nn.model.summary()
 
 # Steps per epoch default `None` is equal to the number of samples in your dataset 
 # divided by the batch size, so I deleted what we were using to allow it be that default
-nn.fit_generator('training.log', epochs = 10)
+nn.fit_generator('training.log', epochs = 140 )
+
+# CLA : Dense layers, Conv LAyers, img_size

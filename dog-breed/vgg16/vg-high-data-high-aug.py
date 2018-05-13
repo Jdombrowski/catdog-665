@@ -37,10 +37,12 @@ testing_dir = '../dataset/test'
 
 # TRAINING DATA
 train_datagen = ImageDataGenerator(
+  rotation_range=30,
   rescale=1./255,
-  shear_range=0.2,
-  zoom_range=0.2,
-  horizontal_flip = True)
+  shear_range=0.4,
+  zoom_range=0.4,
+  horizontal_flip = True,
+  fill_mode="nearest")
 
 training_set = train_datagen.flow_from_directory(
   training_dir,
@@ -57,9 +59,6 @@ test_set = test_datagen.flow_from_directory(
   batch_size=batch_size,
   class_mode = 'input')
 
-'''
-BUILD and FINE-TUNE THE MODEL
-'''
 #Load the VGG16 model
 # - set include_top=False to not include the 3 fully-connected layers at the top of the network
 # - reshape the input size to 90x90
