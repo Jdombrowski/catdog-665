@@ -15,7 +15,7 @@ from keras.preprocessing.image import ImageDataGenerator
 DATA SETUP
 '''
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
-img_size = 256
+img_size = 64
 batch_size = 73
 
 # (for testing)
