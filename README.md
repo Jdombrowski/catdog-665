@@ -20,6 +20,5 @@ This is where you need to do some setup to ge tthe data in the right form to wor
 ### /keras-models
 This has been the majority of my work after the data preprocessing. The base model is the file I have been tweaking/ working (twerking) on, the other files in this folders will all end up being creted from this file, with unique changes for testing.
 
-# HIGH SCORE
-## Current high score is 0.729
-Convolutional netowork with 2 layers of convolution, 90x90 images, and 5 128 dense layers. 
+### /vgg16
+Self explanatory, testing site for the VGG16 
