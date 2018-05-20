@@ -15,18 +15,15 @@ from keras.preprocessing.image import ImageDataGenerator
 DATA SETUP
 '''
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
-img_size = 256
+img_size = 128
 batch_size = 73
-
-# (for testing)
-# train_samples_size = 4000
-# test_samples_size = 1000
 
 # notes: the actual number of data size
 train_samples_size = 10222
 test_samples_size = 10358
 
-epochs = 140
+# one fifth of the dataset
+epochs = 28
 # steps = 140
 steps = train_samples_size // batch_size
 validation_steps = test_samples_size // batch_size

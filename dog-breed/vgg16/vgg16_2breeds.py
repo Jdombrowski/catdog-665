@@ -15,8 +15,8 @@ from keras.preprocessing.image import ImageDataGenerator
 DATA SETUP
 '''
 #resizing parameter 90x90 pixels, change to check the accuracy of the system
-img_size = 256
-batch_size = 73
+img_size = 64
+batch_size = 50
 
 # (for testing)
 # train_samples_size = 4000
@@ -26,21 +26,23 @@ batch_size = 73
 train_samples_size = 10222
 test_samples_size = 10358
 
-epochs = 140
+epochs = 3
 # steps = 140
 steps = train_samples_size // batch_size
 validation_steps = test_samples_size // batch_size
 
 # Directories
-training_dir = '../dataset/train'
+training_dir = '../dataset/2breeds-for-peter'
 testing_dir = '../dataset/test'
 
 # TRAINING DATA
 train_datagen = ImageDataGenerator(
+  rotation_range=20,
   rescale=1./255,
-  shear_range=0.2,
+  shear_range=0.1,
   zoom_range=0.2,
-  horizontal_flip = True)
+  horizontal_flip = True,
+  fill_mode='nearest')
 
 training_set = train_datagen.flow_from_directory(
   training_dir,
@@ -74,7 +76,16 @@ vgg16_output = flatten(vgg16_model.output)
 # out2 = new_layer2(flatten(vgg16_model.output))
 
 mod_vgg16_model = Model(vgg16_input, vgg16_output)
-type(vgg16_model)
+# model2.summary(line_length=150)
+
+# #Load the Inception_V3 model
+# inception_model = inception_v3.InceptionV3(weights='imagenet')
+ 
+# #Load the ResNet50 model
+# resnet_model = resnet50.ResNet50(weights='imagenet')
+ 
+# #Load the MobileNet model
+# mobilenet_model = mobilenet.MobileNet(weights='imagenet')
 
 # Transform VGG16 model into a Sequential model by adding its existing layers
 model = Sequential()
@@ -85,19 +96,23 @@ for layer in (mod_vgg16_model.layers):
 for layer in model.layers:
   layer.trainable = False
 
+
 model.layers.pop()
-
+model.add(Dropout(0.5))
 # Add the last Dense layer to classify the number of required dog breeds
-model.add(Dense(120, activation='softmax'))
+model.add(Dense(2, activation='softmax'))
 model.summary()
-csv_logger = CSVLogger("training.log", append="True")
 
+'''
+TRAIN THE FINE-TUNED MODEL
+'''
 # Compile the model
 model.compile(
   optimizer = 'adam',
   loss = 'categorical_crossentropy',
   metrics = ['accuracy'])
 
+csv_logger = CSVLogger("vgg_training.log",append="True")
 # Fit the model
 model.fit_generator(
   training_set,
